@@ -21,6 +21,7 @@ wpginst() {
     source $HOME/pvenv/bin/activate && $HOME/pvenv/bin/wpg-install.sh -grIpd && deactivate
     cp -r $script_dir/dotfiles/* $HOME/.config
     source $HOME/pvenv/bin/activate && wpg -s $script_dir/backgrounds/background.jpg && deactivate
+    echo "source $HOME/pvenv/bin/activate && sh $HOME/.config/wpg/wp_init.sh && deactivate" >> $HOME/.profile
 
     read -p "Press any key to continue "
 }

@@ -11,6 +11,13 @@ wpginst() {
     python3 -m venv $HOME/pvenv
     $HOME/pvenv/bin/pip3 install --upgrade wheel
     $HOME/pvenv/bin/pip3 install pywal wpgtk
+    
+    mkdir -p $HOME/.config/wpg/templates && \
+    mkdir -p $HOME/.config/i3 && \
+    mkdir -p $HOME/.config/polybar && \
+    mkdir -p $HOME/.config/rofi && \
+    mkdir -p $HOME/.config/dunst
+    
     source $HOME/pvenv/bin/activate && $HOME/pvenv/bin/wpg-install.sh -grIpd && deactivate
     cp -r $script_dir/dotfiles/* $HOME/.config
     source $HOME/pvenv/bin/activate && wpg -s $script_dir/backgrounds/background.jpg && deactivate

@@ -59,6 +59,9 @@ exec --no-startup-id dex --autostart --environment i3
 # xss-lock grabs a logind suspend inhibit lock and will use i3lock to lock the screen before suspend #
 exec --no-startup-id xss-lock --transfer-sleep-lock -- i3lock --nofork
 
+# Reload wpgtk settings
+exec --no-startup-id source $HOME/pvenv/bin/activate && sh $HOME/.config/wpg/wp_init.sh && deactivate
+
 # Use pactl to adjust volume in PulseAudio #
 set $refresh_i3status killall -SIGUSR1 i3status
 bindsym XF86AudioRaiseVolume exec --no-startup-id pactl set-sink-volume @DEFAULT_SINK@ +10% && $refresh_i3status

@@ -1,7 +1,7 @@
 wmninst() {
     echo.blue "Installing video components..."
     sudo aptitude install xserver-xorg-core xserver-xorg-input-evdev x11-xserver-utils x11-xkb-utils x11-utils \
-    lightdm slick-greeter i3 dunst rofi polybar -y
+    lightdm slick-greeter i3 dunst rofi polybar feh -y
 
     read -p "Press any key to continue "
 }

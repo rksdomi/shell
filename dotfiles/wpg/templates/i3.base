@@ -1,0 +1,179 @@
+# Please see https://i3wm.org/docs/userguide.html for a complete reference!
+
+#################### Colors #####################
+set $coloract "{active}"
+set $colorin "{inactive}"
+set_from_resource $color15 i3wm.color15 "{color15}"
+set_from_resource $split i3wm.color10 "{color10}"
+set_from_resource $coloru i3wm.color2 "{color2}"
+set_from_resource $color0 i3wm.color0 "{color0}"
+set_from_resource $color8 i3wm.color8 "{color8}"
+
+# class                 border    backgr    text    indicator child_border
+client.focused          $coloract $coloract $color15 $split  $coloract
+client.focused_inactive $coloract $coloract $color15 $split  $colorin
+client.unfocused        $colorin  $colorin  $color15 $split  $colorin
+client.urgent           $coloru   $coloru   $color15 $coloru $coloru
+client.placeholder      $color0   $color8   $color15 $color0 $color8
+client.background       $color0
+
+
+
+################### Variables ###################
+set $wm_mod_key                         Mod4
+set $wm_smod_key                        Shift
+
+set $wm_default_border                  0
+set $wm_default_floating_border         0
+set $wm_gaps_inner                      12
+set $wm_gaps_outer                      6
+
+set $wm_key_left                        Left
+set $wm_key_down                        Down
+set $wm_key_right                       Right
+set $wm_key_up                          Up
+
+set $wm_terminal                        urxvt
+set $wm_bar                             polybar
+set $wm_launcher                        "rofi -modi drun,run -show drun"
+set $wm_compositor                      picom
+set $wm_browser                         firefox
+
+set $wm_workspace1                      "1"
+set $wm_workspace2                      "2"
+set $wm_workspace3                      "3"
+set $wm_workspace4                      "4"
+set $wm_workspace5                      "5"
+set $wm_workspace6                      "6"
+set $wm_workspace7                      "7"
+set $wm_workspace8                      "8"
+set $wm_workspace9                      "9"
+set $wm_workspace10                     "10"
+
+
+
+################# Applications ##################
+# Start XDG autostart .desktop files using dex #
+exec --no-startup-id dex --autostart --environment i3
+
+# xss-lock grabs a logind suspend inhibit lock and will use i3lock to lock the screen before suspend #
+exec --no-startup-id xss-lock --transfer-sleep-lock -- i3lock --nofork
+
+# Use pactl to adjust volume in PulseAudio #
+set $refresh_i3status killall -SIGUSR1 i3status
+bindsym XF86AudioRaiseVolume exec --no-startup-id pactl set-sink-volume @DEFAULT_SINK@ +10% && $refresh_i3status
+bindsym XF86AudioLowerVolume exec --no-startup-id pactl set-sink-volume @DEFAULT_SINK@ -10% && $refresh_i3status
+bindsym XF86AudioMute exec --no-startup-id pactl set-sink-mute @DEFAULT_SINK@ toggle && $refresh_i3status
+bindsym XF86AudioMicMute exec --no-startup-id pactl set-source-mute @DEFAULT_SOURCE@ toggle && $refresh_i3status
+
+# Start a terminal #
+bindsym $wm_mod_key+Return exec $wm_terminal
+
+# Start rofi (a program launcher) #
+bindcode $wm_mod_key+40 exec $wm_launcher
+
+
+
+################### Workspaces ##################
+# Switch to workspace #
+bindsym $wm_mod_key+1 workspace number $wm_workspace1
+bindsym $wm_mod_key+2 workspace number $wm_workspace2
+bindsym $wm_mod_key+3 workspace number $wm_workspace3
+bindsym $wm_mod_key+4 workspace number $wm_workspace4
+bindsym $wm_mod_key+5 workspace number $wm_workspace5
+bindsym $wm_mod_key+6 workspace number $wm_workspace6
+bindsym $wm_mod_key+7 workspace number $wm_workspace7
+bindsym $wm_mod_key+8 workspace number $wm_workspace8
+bindsym $wm_mod_key+9 workspace number $wm_workspace9
+bindsym $wm_mod_key+0 workspace number $wm_workspace10
+
+# Move focused container to workspace #
+bindsym $wm_mod_key+$wm_smod_key+1 move container to workspace number $wm_workspace1
+bindsym $wm_mod_key+$wm_smod_key+2 move container to workspace number $wm_workspace2
+bindsym $wm_mod_key+$wm_smod_key+3 move container to workspace number $wm_workspace3
+bindsym $wm_mod_key+$wm_smod_key+4 move container to workspace number $wm_workspace4
+bindsym $wm_mod_key+$wm_smod_key+5 move container to workspace number $wm_workspace5
+bindsym $wm_mod_key+$wm_smod_key+6 move container to workspace number $wm_workspace6
+bindsym $wm_mod_key+$wm_smod_key+7 move container to workspace number $wm_workspace7
+bindsym $wm_mod_key+$wm_smod_key+8 move container to workspace number $wm_workspace8
+bindsym $wm_mod_key+$wm_smod_key+9 move container to workspace number $wm_workspace9
+bindsym $wm_mod_key+$wm_smod_key+0 move container to workspace number $wm_workspace10
+
+
+
+#################### Windows ####################
+### Borders ###
+default_border pixel $wm_default_border
+default_floating_border pixel $wm_default_floating_border
+
+
+### Gaps ###
+gaps inner $wm_gaps_inner
+gaps outer $wm_gaps_outer
+
+
+### Focus ###
+# Kill focused window #
+bindsym $wm_mod_key+$wm_smod_key+q kill
+
+# Enter fullscreen for the focused window #
+bindsym $wm_mod_key+f fullscreen toggle
+
+# Change focus #
+bindsym $wm_mod_key+$wm_key_left focus left
+bindsym $wm_mod_key+$wm_key_down focus down
+bindsym $wm_mod_key+$wm_key_up focus up
+bindsym $wm_mod_key+$wm_key_right focus right
+
+# Move focused window #
+bindsym $wm_mod_key+$wm_smod_key+$wm_key_left move left
+bindsym $wm_mod_key+$wm_smod_key+$wm_key_down move down
+bindsym $wm_mod_key+$wm_smod_key+$wm_key_up move up
+bindsym $wm_mod_key+$wm_smod_key+$wm_key_right move right
+
+# Change focus between tiling / floating windows #
+bindsym $wm_mod_key+space focus mode_toggle
+
+
+### Layout ###
+# Change container layout (stacked, tabbed, toggle split) #
+bindsym $wm_mod_key+s layout stacking
+bindsym $wm_mod_key+w layout tabbed
+bindsym $wm_mod_key+e layout toggle split
+
+# Toggle tiling / floating layout #
+bindsym $wm_mod_key+$wm_smod_key+space floating toggle
+
+# Modifier for dragging the window with $modifier+mouse
+floating_modifier $wm_mod_key
+
+
+### Modes ###
+# Enter resize mode
+mode "resize" {{
+        # These bindings trigger as soon as you enter the resize mode
+        # Pressing left, right, up and down will shrink and grow the window width and height.
+        bindsym $wm_key_left resize shrink width 10 px or 10 ppt
+        bindsym $wm_key_down resize grow height 10 px or 10 ppt
+        bindsym $wm_key_up resize shrink height 10 px or 10 ppt
+        bindsym $wm_key_right resize grow width 10 px or 10 ppt
+
+        # back to normal: Enter or Escape or $wm_mod_key+r
+        bindsym Return mode "default"
+        bindsym Escape mode "default"
+        bindsym $wm_mod_key+r mode "default"
+}}
+
+bindsym $wm_mod_key+r mode "resize"
+
+
+
+################## Window Manager ###############
+# reload the configuration file
+bindsym $wm_mod_key+$wm_smod_key+c reload
+
+# restart i3 inplace (preserves your layout/session, can be used to upgrade i3)
+bindsym $wm_mod_key+$wm_smod_key+r restart
+
+# exit i3 (logs you out of your X session)
+bindsym $wm_mod_key+$wm_smod_key+e exec "i3-nagbar -t warning -m 'You pressed the exit shortcut. Do you really want to exit i3? This will end your X session.' -B 'Yes, exit i3' 'i3-msg exit'"

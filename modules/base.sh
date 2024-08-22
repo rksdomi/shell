@@ -1,54 +1,32 @@
-sysupdt() {
+system-update() {
+    echo.blue "Updating user directories..."
     xdg-user-dirs-update
-    sudo apt install aptitude
+    cat /home/$USER/.config/user-dirs.dirs
 
     echo.blue "Updating system..."
-    sudo aptitude update -y
+    sudo apt update -y
 
     echo.blue "Upgrading system..."
-    sudo aptitude safe-upgrade -y
-
-    echo.blue "Upgrading distribution..."
-    sudo aptitude full-upgrade -y
-
-    read -p "Press any key to continue "
+    sudo apt upgrade -y
 }
 
-fwlinst() {
-    echo.blue "Installing Uncomplicated Firewall and applying default policies..."
-    sudo aptitude install ufw -y
+base-install() {
+    base_packages="build-essential dkms linux-headers-$(uname -r) ufw $(tasksel --task-packages standard) psmisc git"
+    if (( is_laptop == 0 )); then
+        base_packages="$base_packages $(tasksel --task-packages laptop)"
+    fi
+
+    echo.blue "Installing base packages..."
+    sudo apt install $base_packages -y
+
+    echo.blue "Setting up default firewall policies..."
     sudo ufw default deny incoming
     sudo ufw default allow outgoing
     sudo ufw deny telnet comment "Deny Telnet"
     sudo ufw deny ssh comment "Deny SSH"
-
-    read -p "Press any key to continue "
-}
-
-lkhinst() {
-    echo.blue "Installing Linux Kernel headers..."
-    sudo aptitude install build-essential linux-headers-$(uname -r) -y
-
-    read -p "Press any key to continue "
-}
-
-bsuinst() {
-    echo.blue "Installing Tasksel STANDARD task..."
-    sudo tasksel install task standard
-
-    if (( is_laptop == 0 )); then
-        echo.blue "Installing Tasksel LAPTOP task..."
-        sudo tasksel install task laptop
-    fi
-
-    sudo aptitude install git -y
-
-    read -p "Press any key to continue "
 }
 
 base_setup() {
-    sysupdt
-    fwlinst
-    lkhinst
-    bsuinst
+    system-update
+    base-install
 }

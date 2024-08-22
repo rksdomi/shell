@@ -1,32 +1,43 @@
-wmninst() {
+xorg-install() {
     echo.blue "Installing video components..."
-    sudo aptitude install xserver-xorg-core xserver-xorg-input-evdev x11-xserver-utils x11-xkb-utils x11-utils \
-    lightdm slick-greeter i3 dunst rofi polybar feh -y
-
-    read -p "Press any key to continue "
+    sudo apt install xserver-xorg-core xserver-xorg-input-evdev x11-xserver-utils x11-xkb-utils x11-utils xinit rxvt-unicode i3 dunst rofi polybar xterm*- -y
 }
 
-wpginst() {
-    sudo aptitude install python3.11-venv xsettingsd gtk2-engines-murrine imagemagick mpd
-    python3 -m venv $HOME/pvenv
-    $HOME/pvenv/bin/pip3 install --upgrade wheel
-    $HOME/pvenv/bin/pip3 install pywal wpgtk
+wpgtk-install() {
+    echo.blue "Installing dependencies..."
+    sudo apt install python3-full python3-virtualenv libcairo2-dev libgirepository1.0-dev gir1.2-gtk-3.0 xsettingsd gtk2-engines-murrine imagemagick feh -y
     
+    echo.blue "Creating configuration directories..."
     mkdir -p $HOME/.config/wpg/templates && \
     mkdir -p $HOME/.config/i3 && \
     mkdir -p $HOME/.config/polybar && \
     mkdir -p $HOME/.config/rofi && \
-    mkdir -p $HOME/.config/dunst
-    
-    source $HOME/pvenv/bin/activate && $HOME/pvenv/bin/wpg-install.sh -grIpd && deactivate
-    cp -r $script_dir/dotfiles/* $HOME/.config
-    source $HOME/pvenv/bin/activate && wpg -s $script_dir/backgrounds/background.jpg && deactivate
-    echo "source $HOME/pvenv/bin/activate && sh $HOME/.config/wpg/wp_init.sh && deactivate" >> $HOME/.profile
+    mkdir -p $HOME/.config/dunst && \
+    mkdir -p $HOME/.local/share/backgrounds && \
+    cp -r $script_dir/dotfiles/. $HOME/
+    cp -r $script_dir/backgrounds/background.jpg $HOME/.local/share/backgrounds
 
-    read -p "Press any key to continue "
+    echo.blue "Cloning wpgtk..."
+    git clone https://github.com/deviantfero/wpgtk && cd wpgtk
+
+    echo.blue "Creating Python virtual environment..."
+    virtualenv $HOME/.pyvenv && \
+    source $HOME/.pyvenv/bin/activate && \
+    pip3 install --upgrade wheel && \
+    pip3 install pygobject && \ 
+    pip3 install pywal && \
+    pip3 install . && \
+    bash wpgtk/misc/wpg-install.sh -grIipd && \
+    cd $script_dir && \
+    cp -r $HOME/.config/wpg/templates $script_dir/dotfiles
+    rm -r wpgtk && \
+    $HOME/.pyvenv/bin/wpg -s $HOME/.local/share/backgrounds/background.jpg && \
+    deactivate
+
+    echo $HOME/.config/i3/config >> "exec_always --no-startup-id $HOME/.pyvenv/bin/wpg -rs $HOME/.local/share/backgrounds/background.jpg"
 }
 
 video_setup() {
-    wmninst
-    wpginst
+    #xorg-install
+    wpgtk-install
 }

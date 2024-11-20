@@ -1,25 +1,31 @@
-system-update() {
-    echo.blue "Updating user directories..."
+#!/bin/sh
+
+# Update user directories and system
+system_update() {
+    echo_blue_message "Updating user directories..."
     xdg-user-dirs-update
-    cat /home/$USER/.config/user-dirs.dirs
+    cat "/home/$USER/.config/user-dirs.dirs" || { echo_blue_message "Failed to update user directories"; exit 1; }
 
-    echo.blue "Updating system..."
-    sudo apt update -y
+    echo_blue_message "Updating system..."
+    sudo apt-get update -y || { echo_blue_message "Failed to update system"; exit 1; }
 
-    echo.blue "Upgrading system..."
-    sudo apt upgrade -y
+    echo_blue_message "Upgrading system..."
+    sudo apt-get upgrade -y || { echo_blue_message "Failed to upgrade system"; exit 1; }
 }
 
-base-install() {
-    base_packages="build-essential dkms linux-headers-$(uname -r) ufw $(tasksel --task-packages standard) psmisc git"
-    if (( is_laptop == 0 )); then
-        base_packages="$base_packages $(tasksel --task-packages laptop)"
+# Install base packages (minimal for a Debian with i3)
+base_install() {
+    base_packages="build-essential dkms linux-headers-$(uname -r) ufw"
+    
+    # Add laptop tools if the system is a laptop
+    if [ "$(is_laptop)" -eq 0 ]; then
+        base_packages="$base_packages laptop-tools"
     fi
 
-    echo.blue "Installing base packages..."
-    sudo apt install $base_packages -y
+    echo_blue_message "Installing base packages..."
+    sudo apt-get install --no-install-recommends "$base_packages" -y || { echo_blue_message "Failed to install base packages"; exit 1; }
 
-    echo.blue "Setting up default firewall policies..."
+    echo_blue_message "Setting up default firewall policies..."
     sudo ufw default deny incoming
     sudo ufw default allow outgoing
     sudo ufw deny telnet comment "Deny Telnet"
@@ -27,6 +33,6 @@ base-install() {
 }
 
 base_setup() {
-    system-update
-    base-install
+    system_update
+    base_install
 }

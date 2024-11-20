@@ -1,16 +1,19 @@
-#!/bin/bash
+#!/bin/sh
 
-source "modules/_util.sh"
-source "modules/base.sh"
-source "modules/sound.sh"
-source "modules/video.sh"
+. "modules/_util.sh"
+. "modules/base.sh"
+. "modules/sound.sh"
+. "modules/video.sh"
 
-script_dir=$(realpath $(dirname $0))
+EXPORT SCRIPT_DIR="$(realpath "$(dirname "$0")")"
 
-# Checks if script is being run as root and exits case true
+# Ensure the script is not run as root
 check_root
+
+# Set up system, sound, and video components
 base_setup
 sound_setup
 video_setup
 
-sudo apt autoremove -y
+# Clean up unnecessary packages
+sudo apt-get autoremove -y

@@ -1,4 +1,4 @@
-Xft.dpi: 120
+Xft.dpi: 96
 *.font: xft:DejaVu Sans Mono:style=Regular:size=12
 *.boldFont: xft:DejaVu Sans Mono:style=Bold:size=12
 *.italicFont: xft:DejaVu Sans Mono:style=Italic:size=12

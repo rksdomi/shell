@@ -1,19 +1,26 @@
 #!/bin/sh
+# Main script
 
-. "modules/_util.sh"
-. "modules/base.sh"
-. "modules/sound.sh"
-. "modules/video.sh"
+SCRIPT_DIR="$(realpath "$(dirname "$0")")"
+export SCRIPT_DIR
 
-EXPORT SCRIPT_DIR="$(realpath "$(dirname "$0")")"
+# Exit script on any error
+set -e
 
-# Ensure the script is not run as root
+# Source common modules
+. "$SCRIPT_DIR/modules/_util.sh"
+. "$SCRIPT_DIR/modules/base.sh"
+. "$SCRIPT_DIR/modules/sound.sh"
+. "$SCRIPT_DIR/modules/video.sh"
+. "$SCRIPT_DIR/modules/harden.sh"
+
 check_root
 
-# Set up system, sound, and video components
+# Set up system components
 base_setup
 sound_setup
 video_setup
+harden_system
 
-# Clean up unnecessary packages
+# (Optionally) Autoremove packages no longer needed.
 sudo apt-get autoremove -y

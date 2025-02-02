@@ -1,35 +1,35 @@
 #!/bin/sh
+# Base system update and package installation functions
 
-# Update user directories and system
 system_update() {
-    echo_blue_message "Updating user directories..."
+    echo_info "Updating user directories..."
     xdg-user-dirs-update
-    cat "/home/$USER/.config/user-dirs.dirs" || { echo_blue_message "Failed to update user directories"; exit 1; }
-
-    echo_blue_message "Updating system..."
-    sudo apt-get update -y || { echo_blue_message "Failed to update system"; exit 1; }
-
-    echo_blue_message "Upgrading system..."
-    sudo apt-get upgrade -y || { echo_blue_message "Failed to upgrade system"; exit 1; }
-}
-
-# Install base packages (minimal for a Debian with i3)
-base_install() {
-    base_packages="build-essential dkms linux-headers-$(uname -r) ufw"
-    
-    # Add laptop tools if the system is a laptop
-    if [ "$(is_laptop)" -eq 0 ]; then
-        base_packages="$base_packages laptop-tools"
+    if [ ! -f "/home/$USER/.config/user-dirs.dirs" ]; then
+        echo_error "User directories file not found"
+        exit 1
     fi
 
-    echo_blue_message "Installing base packages..."
-    sudo apt-get install --no-install-recommends "$base_packages" -y || { echo_blue_message "Failed to install base packages"; exit 1; }
+    echo_info "Updating system package lists..."
+    sudo apt-get update -y || { echo_error "Failed to update system package lists"; exit 1; }
 
-    echo_blue_message "Setting up default firewall policies..."
-    sudo ufw default deny incoming
-    sudo ufw default allow outgoing
-    sudo ufw deny telnet comment "Deny Telnet"
-    sudo ufw deny ssh comment "Deny SSH"
+    echo_info "Upgrading installed packages..."
+    sudo apt-get upgrade -y || { echo_error "Failed to upgrade system"; exit 1; }
+    
+    echo_success "System updated"
+}
+
+base_install() {
+    base_packages="build-essential dkms linux-headers-$(uname -r)"
+
+    # Add laptop-specific tools if the system is a laptop
+    if is_laptop; then
+        base_packages="$base_packages tlp acpi"
+    fi
+
+    echo_info "Installing base packages..."
+    sudo apt-get install $base_packages -y || { echo_error "Failed to install base packages"; exit 1; }
+
+    echo_success "Base packages installed"
 }
 
 base_setup() {

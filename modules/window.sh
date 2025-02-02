@@ -2,7 +2,7 @@
 
 i3_setup() {
     echo_info "Installing i3 and utilities"
-    sudo apt install -y i3 dunst rofi polybar rxvt-unicode snapd xterm || {
+    sudo apt install -y i3 dunst rofi polybar rxvt-unicode snapd xterm- || {
         echo_error "Failed to install i3"
         exit 1
     }
